@@ -4,11 +4,11 @@ from django.urls import reverse_lazy
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-2i#5d)&2m458zjxo+()l4*%_i%$f2x+8)pboavn)*wz85yhzo+'
-
-DEBUG = True
-
-ALLOWED_HOSTS = []
+SECRET_KEY = os.environ.get("SECRET_KEY", default='foo')
+DEBUG = int(os.environ.get("DEBUG", default=True))
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default='*').split(" ")
+CSRF_TRUSTED_ORIGINS = [os.environ.get("CSRF_TRUSTED_ORIGINS", default='http://localhost')]
+SSL_VERIFY = int(os.environ.get("SSL_VERIFY", default=0))
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -18,7 +18,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'whitenoise.runserver_nostatic',
     'django.contrib.staticfiles',
-    'proj'
+    'core'
 ]
 
 MIDDLEWARE = [
@@ -32,7 +32,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'proj.urls'
+ROOT_URLCONF = 'core.urls'
 
 LOGIN_URL = reverse_lazy('login')
 LOGOUT_URL = reverse_lazy('logout')
@@ -53,8 +53,8 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'proj.wsgi.application'
-ASGI_APPLICATION = 'proj.asgi.application'
+WSGI_APPLICATION = 'core.wsgi.application'
+ASGI_APPLICATION = 'core.asgi.application'
 
 DATABASES = {
     'default': {
@@ -67,6 +67,13 @@ DATABASES = {
     }
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "core.cache.RedisCache",
+        "LOCATION": os.environ.get('CACHE_LOCATION_DEFAULT', 'redis://localhost:6379/0'),
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -75,31 +82,23 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATIC_URL = "/staticfiles/"
+STATIC_URL = os.environ.get("STATIC_URL", default='/staticfiles/')
+STATIC_ROOT = os.path.join(BASE_DIR, os.environ.get("STATIC_ROOT", default='staticfiles'))
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
 )
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
-
-MEDIA_ROOT = BASE_DIR / "media"
-MEDIA_URL = "/media/"
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+MEDIA_URL = os.environ.get("MEDIA_URL", default='/mediafiles/')
+MEDIA_ROOT = os.path.join(BASE_DIR, os.environ.get("MEDIA_ROOT", default='mediafiles'))
 
 CELERY_TIMEZONE = 'Pacific/Auckland'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = os.environ.get("DJANGO_CELERY_BROKER_URL", 'redis://127.0.0.1:6379')
-
-REDIS_HOST = os.environ.get("REDIS_HOST", default="127.0.0.1")
-REDIS_PORT = os.environ.get("REDIS_PORT", default=6379)
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", 'redis://localhost:6379/15')

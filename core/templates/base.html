@@ -3,11 +3,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <title>{% block base-title %}{% endblock %}</title>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   {% block base-meta %}{% endblock %}
-  <title>{% block base-title %}{% endblock %}</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,14 +16,13 @@
 
   <link rel="stylesheet" href="{% static 'vendor/bootstrap-5.3.2.css' %}">
   <link rel="stylesheet" href="{% static 'vendor/boostrap-icons-1.11.3.css' %}">
-  <link rel="stylesheet" type="text/css" href="{% static 'proj/base.css' %}"/>
+  <link rel="stylesheet" type="text/css" href="{% static 'core/base.css' %}"/>
   {% block base-css %}{% endblock %}
 
   <script src="{% static 'vendor/bootstrap-5.3.2.js' %}"></script>
-  <script src="{% static 'vendor/htmx-1.9.10.js' %}"></script>
   {% block base-js %}{% endblock %}
 </head>
-<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+<body>
   {% block base-content %}{% endblock %}
 </body>
 </html>

@@ -1,5 +1,3 @@
-version: '3.4'
-
 services:
   redis:
     image: redis:latest
@@ -44,7 +42,7 @@ services:
 #  celery_worker:
 #    image: web-image
 #    container_name: celery_worker
-#    command: sh -c "celery -A proj worker -l info --concurrency 2"
+#    command: sh -c "celery -A core worker -l info --concurrency 2"
 #    depends_on:
 #      - db
 #      - redis
@@ -62,7 +60,7 @@ services:
 #  celery_beat:
 #    image: web-image
 #    container_name: celery_beat
-#    command: sh -c "celery -A proj beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
+#    command: sh -c "celery -A core beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler"
 #    depends_on:
 #      - db
 #      - redis
