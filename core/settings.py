@@ -67,13 +67,6 @@ DATABASES = {
     }
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "core.cache.RedisCache",
-        "LOCATION": os.environ.get('CACHE_LOCATION_DEFAULT', 'redis://localhost:6379/0'),
-    }
-}
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -98,7 +91,17 @@ STATICFILES_FINDERS = (
 MEDIA_URL = os.environ.get("MEDIA_URL", default='/mediafiles/')
 MEDIA_ROOT = os.path.join(BASE_DIR, os.environ.get("MEDIA_ROOT", default='mediafiles'))
 
+REDIS_HOST = os.environ.get("REDIS_HOST", default="localhost")
+REDIS_PORT = os.environ.get("REDIS_PORT", default=6379)
+
+CACHES = {
+    "default": {
+        "BACKEND": "core.cache.RedisCache",
+        "LOCATION": "redis://%s:%s/%s" % (REDIS_HOST, REDIS_PORT, os.environ.get('CACHE_LOCATION_DEFAULT', 0)),
+    }
+}
+
 CELERY_TIMEZONE = 'Pacific/Auckland'
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", 'redis://localhost:6379/15')
+CELERY_BROKER_URL = "redis://%s:%s/%s" % (REDIS_HOST, REDIS_PORT, os.environ.get('CELERY_BROKER_LOCATION', 15))

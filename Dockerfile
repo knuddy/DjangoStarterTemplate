@@ -29,6 +29,3 @@ RUN pip3 install -r requirements.txt
 RUN chown -R app:app $APP_HOME
 
 USER app
-
-COPY entrypoint.sh .
-ENTRYPOINT ["bash", "/usr/src/app/entrypoint.sh"]
